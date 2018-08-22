@@ -19,7 +19,7 @@
                     return new HashSet<int> { 3, 5, 9 };
             }
 
-            throw new ArgumentException();
+            return new HashSet<int>();
         }
     }
 }

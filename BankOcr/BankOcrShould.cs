@@ -28,6 +28,14 @@
         }
 
         [Test]
+        public void Return_true_when_Digit_is_illegile()
+        {
+            var digit = new Digit(File.ReadAllLines(@"reference_asciiarts\1_ill.txt"));
+
+            Check.That(digit.IsIllegible()).IsTrue();
+        }
+
+        [Test]
         public void Account_123956189_is_an_invalid_account()
         {
             var bankOcrLine = new OcrReader();
@@ -55,7 +63,7 @@
                             var actual = bankOcrLine.ReadAccountsAsStrings(File.ReadAllLines($@"reference_asciiarts\invalidAccount_123956189_allLineShouldHaveExactly27Characters.txt")).ToArray();
                         })
                 .Throws<ArgumentException>()
-                .WithMessage("All lines should have exactly 27 characters.");
+                .WithMessage("All lines should have exactly 27 characters. they are:   | _| _||_||_ | _   ||_||_|");
         }
 
         [Test]
@@ -151,6 +159,15 @@
             var ocrReader = new OcrReader();
             int expected = ocrReader.Read(readAllLines);
             Check.That(expected).IsEqualTo(9);
+        }
+
+        [Test]
+        public void Returns_3_accounts_when_read_file_contains_12_lines_of_asciiarts()
+        {
+            var readAllLines = File.ReadAllLines(@"reference_asciiarts\list_of_accounts.txt");
+            var ocrReader = new OcrReader();
+            var expected = ocrReader.ReadAccountsAsStrings(readAllLines);
+            Check.That(expected).Contains("123456789", "123956189", "000000000");
         }
 
         [OneTimeSetUp]

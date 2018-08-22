@@ -5,7 +5,7 @@
 
     public class Account
     {
-        private int _checksum;
+        private readonly int _checksum;
 
         public List<Digit> DigitsValues { get; }
 
@@ -13,7 +13,7 @@
         {
             this.DigitsValues = digitsValues;
 
-            this._checksum = DigitsValues.Sum(d => d.ChecksumWeight * d.GetNumeric());
+            this._checksum = DigitsValues.Sum(d => d.ChecksumWeight * d.GetNumeric()) % 11;
         }
 
         public string AsString()
@@ -23,8 +23,8 @@
 
         public bool IsValid()
         {
-            var isValid = _checksum % 11 == 0;
-            return isValid ;
+            var isValid = _checksum == 0;
+            return isValid;
         }
     }
 }

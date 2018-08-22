@@ -1,6 +1,7 @@
 ﻿namespace BankOcr
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     public class Digit
@@ -32,6 +33,18 @@
 
         internal int GetNumeric()
         {
+            var candidate = GetCandidate();
+
+            if (!candidate.HasValue)
+            {
+                throw new ApplicationException("Somewhere not correctly implemented");
+            }
+
+            return candidate.Value;
+        }
+
+        private int? GetCandidate()
+        {
             var candidates1 = this.headerReader.Read(this._header);
             var candidates2 = this.bodyReader.Read(this._body);
             var candidates3 = this._footerReader.Read(this._bottom);
@@ -39,12 +52,12 @@
             candidates1.IntersectWith(candidates2);
             candidates1.IntersectWith(candidates3);
 
-            if (candidates1.Count != 1)
-            {
-                throw new ApplicationException("Somewhere not correctly implemented");
-            }
+            return candidates1.Count == 1 ? (int?)candidates1.Single() : null;
+        }
 
-            return candidates1.Single();
+        public bool IsIllegible()
+        {
+            return !GetCandidate().HasValue;
         }
     }
 }

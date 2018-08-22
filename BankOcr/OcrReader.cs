@@ -113,18 +113,11 @@
             return 0;
         }
 
+
         public IEnumerable<string> ReadAccountsAsStrings(string[] lines)
         {
             var readAccountsAsStrings = ReadAccounts(lines).Select(account => account.AsString()).ToArray();
             return readAccountsAsStrings;
-
-            //ThrowsWhenAnyNonEmptyLineDoesNotHave27Characters(lines);
-
-            //var accounts = Parse(lines);
-            //foreach (var account in accounts)
-            //{
-            //    yield return account.AsString();
-            //}
         }
 
         public IEnumerable<Account> ReadAccounts(string[] lines)
@@ -138,9 +131,10 @@
         {
             IEnumerable<string> nonEmptyLines = lines.Where((l, index) => !IsThe4thLineOfEntry(index));
 
-            if (nonEmptyLines.Any(x => x.Length != 27))
+            var linesNotContaining27Chars = nonEmptyLines.Where(x => x.Length != 27);
+            if (linesNotContaining27Chars.Any())
             {
-                throw new ArgumentException("All lines should have exactly 27 characters.");
+                throw new ArgumentException($"All lines should have exactly 27 characters. they are: {string.Join(Environment.NewLine, linesNotContaining27Chars)}");
             }
         }
 
