@@ -16,6 +16,7 @@
                 case "|_ ":
                     return new HashSet<int> { 2 };
                 case " _|":
+                case " _ ":
                     return new HashSet<int> { 3, 5, 9 };
             }
 

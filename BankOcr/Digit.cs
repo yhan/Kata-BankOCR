@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using NUnit.Framework.Internal.Execution;
+
     public class Digit
     {
         public int ChecksumWeight { get; }
@@ -17,7 +19,9 @@
         private readonly HeaderReader headerReader;
         private readonly BodyReader bodyReader;
         private readonly FooterReader _footerReader;
-        
+
+        private readonly string _illegal = "ILL";
+
         public Digit(string[] lines, int checksumWeight = 0)
         {
             ChecksumWeight = checksumWeight;
@@ -31,19 +35,7 @@
             this._footerReader = new FooterReader();
         }
 
-        internal int GetNumeric()
-        {
-            var candidate = GetCandidate();
-
-            if (!candidate.HasValue)
-            {
-                throw new ApplicationException("Somewhere not correctly implemented");
-            }
-
-            return candidate.Value;
-        }
-
-        private int? GetCandidate()
+        public string GetNumericAsString()
         {
             var candidates1 = this.headerReader.Read(this._header);
             var candidates2 = this.bodyReader.Read(this._body);
@@ -52,12 +44,37 @@
             candidates1.IntersectWith(candidates2);
             candidates1.IntersectWith(candidates3);
 
-            return candidates1.Count == 1 ? (int?)candidates1.Single() : null;
+            return candidates1.Count == 1 ? candidates1.Single().ToString() : _illegal;
         }
 
-        public bool IsIllegible()
+        public int? GetNumeric()
         {
-            return !GetCandidate().HasValue;
+            var numericAsString = GetNumericAsString();
+            if (numericAsString != _illegal)
+            {
+                return _forcedValue ?? int.Parse(numericAsString);
+            }
+            return null;
         }
+
+        public override string ToString()
+        {
+            var numeric = GetNumericAsString();
+            if (this.IsIllegal)
+            {
+                return "?";
+            }
+
+            return numeric.ToString();
+        }
+
+        public bool IsIllegal => GetNumericAsString() == _illegal;
+
+        public void ForceValue(int? value)
+        {
+            _forcedValue = value;
+        }
+
+        private int? _forcedValue;
     }
 }
