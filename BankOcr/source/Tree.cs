@@ -1,4 +1,6 @@
-﻿namespace BankOcr
+﻿using BankOcr.source;
+
+namespace BankOcr
 {
     public class Tree<T>
     {

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace BankOcr
+namespace BankOcr.source
 {
     public class AccountComputation
     {
@@ -78,7 +78,7 @@ namespace BankOcr
                 var head = new Node<Digit>(new Digit(numericsOf1StDigit[i], firstDigit.ChecksumWeight), null);
                 var tree = new Tree<Digit>(head);
 
-                var currentNodes = new[] { head };
+                var currentNodes = new[] {head};
 
                 for (var j = 1; j < digitComputations.Count; j++)
                 {

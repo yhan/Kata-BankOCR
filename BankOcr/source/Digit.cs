@@ -1,4 +1,4 @@
-﻿namespace BankOcr
+﻿namespace BankOcr.source
 {
     public struct Digit
     {

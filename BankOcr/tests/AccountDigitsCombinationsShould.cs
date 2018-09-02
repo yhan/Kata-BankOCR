@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BankOcr.source;
 using NFluent;
 using NUnit.Framework;
 
@@ -81,5 +82,4 @@ namespace BankOcr
             Check.That(combinations[1].Select(x => x.Numeric)).ContainsExactly(4, 8, 0, 0, 6, 7, 7, 7, 5);
         }
     }
-
 }

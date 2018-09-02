@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BankOcr
+namespace BankOcr.source
 {
     public class BankOCrReader
     {

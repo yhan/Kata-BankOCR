@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BankOcr
+namespace BankOcr.source
 {
     public class BodyReader : IOcrLineReader
     {

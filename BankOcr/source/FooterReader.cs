@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BankOcr
+namespace BankOcr.source
 {
     public class FooterReader : IOcrLineReader
     {

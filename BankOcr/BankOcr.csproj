@@ -50,20 +50,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Account.cs" />
-    <Compile Include="AccountComputation.cs" />
-    <Compile Include="AccountDigitsCombinationsShould.cs" />
-    <Compile Include="BankOcrShould.cs" />
-    <Compile Include="BodyReader.cs" />
-    <Compile Include="Digit.cs" />
-    <Compile Include="DigitComputation.cs" />
-    <Compile Include="FooterReader.cs" />
-    <Compile Include="HeaderReader.cs" />
-    <Compile Include="IOcrLineReader.cs" />
-    <Compile Include="BankOCrReader.cs" />
-    <Compile Include="Node.cs" />
+    <Compile Include="source\Account.cs" />
+    <Compile Include="source\AccountComputation.cs" />
+    <Compile Include="tests\AccountDigitsCombinationsShould.cs" />
+    <Compile Include="tests\BankOcrShould.cs" />
+    <Compile Include="source\BodyReader.cs" />
+    <Compile Include="source\Digit.cs" />
+    <Compile Include="source\DigitComputation.cs" />
+    <Compile Include="source\FooterReader.cs" />
+    <Compile Include="source\HeaderReader.cs" />
+    <Compile Include="source\IOcrLineReader.cs" />
+    <Compile Include="source\BankOCrReader.cs" />
+    <Compile Include="source\Node.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tree.cs" />
+    <Compile Include="source\Tree.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
