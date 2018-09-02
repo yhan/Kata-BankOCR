@@ -242,7 +242,7 @@
         public void Returns_digit_when_asciiart_digit_as_expected(int expectedDigit)
         {
             var digit = new Digit(File.ReadAllLines($@"reference_asciiarts\{expectedDigit}.txt"));
-            int actual = digit.Numeric.Value;
+            int actual = digit.Numerics.Single();
             Check.That(actual).IsEqualTo(expectedDigit);
         }
     }

@@ -43,7 +43,7 @@
 
         public bool IsValid()
         {
-            this._checksum = DigitsValues.Sum(d => d.ChecksumWeight * d.Numeric.Value) % 11;
+            this._checksum = DigitsValues.Sum(d => d.ChecksumWeight * d.Numerics.Single()) % 11;
             return _checksum == 0;
         }
 
@@ -51,5 +51,12 @@
         {
             return DigitsValues.Any(x => x.IsIllegal);
         }
+
+        private void ComputeCombinations()
+        {
+
+        }
+
+        private List<int[]> _combinations = new List<int[]>();
     }
 }

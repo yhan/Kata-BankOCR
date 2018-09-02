@@ -31,10 +31,10 @@
             bodyReader = new BodyReader();
             _footerReader = new FooterReader();
 
-            Numeric = GetNumeric();
+            Numerics = GetNumericPossibilities();
         }
 
-        public int? Numeric { get; }
+        public HashSet<int> Numerics { get; }
 
         public int ChecksumWeight { get; }
 
@@ -46,20 +46,18 @@
             }
         }
 
-        public HashSet<int> PossibleNumeric { get; private set; }
-
         public string GetNumericAsString()
         {
-            var value = GetNumeric();
-            if (value.HasValue)
+            HashSet<int> value = GetNumericPossibilities();
+            if (value.Count == 1)
             {
-                return value.ToString();
+                return value.Single().ToString();
             }
 
             return _illegal;
         }
 
-        private int? GetNumeric()
+        private HashSet<int> GetNumericPossibilities()
         {
             var candidates = headerReader.Read(_header);
             var candidates2 = bodyReader.Read(_body);
@@ -68,21 +66,7 @@
             candidates.IntersectWith(candidates2);
             candidates.IntersectWith(candidates3);
 
-            var candidatesCount = candidates.Count;
-            if (candidatesCount == 1)
-            {
-                return candidates.Single();
-            }
-
-            if (candidatesCount == 0)
-            {
-                return null;
-            }
-
-            // More than 1
-            PossibleNumeric = candidates;
-
-            return null;
+            return candidates;
         }
     }
 }
