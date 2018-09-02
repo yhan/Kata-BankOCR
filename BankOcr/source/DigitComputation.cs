@@ -13,11 +13,11 @@ namespace BankOcr.source
 
         private readonly string _header;
 
-        private readonly string _illegal = "?";
+        private const string Illegal = "?";
 
-        private readonly BodyReader bodyReader;
+        private readonly BodyReader _bodyReader;
 
-        private readonly HeaderReader headerReader;
+        private readonly HeaderReader _headerReader;
 
         public DigitComputation(string[] lines, int checksumWeight = 0)
         {
@@ -27,8 +27,8 @@ namespace BankOcr.source
             _body = lines[1];
             _bottom = lines[2];
 
-            headerReader = new HeaderReader();
-            bodyReader = new BodyReader();
+            _headerReader = new HeaderReader();
+            _bodyReader = new BodyReader();
             _footerReader = new FooterReader();
 
             Numerics = GetNumericPossibilities();
@@ -45,12 +45,7 @@ namespace BankOcr.source
 
         public int ChecksumWeight { get; }
 
-        public bool IsIllegal => GetNumericAsString() == _illegal;
-
-        public Queue<int> AsQueue()
-        {
-            return new Queue<int>(Numerics);
-        }
+        public bool IsIllegal => GetNumericAsString() == Illegal;
 
         public string GetNumericAsString()
         {
@@ -60,13 +55,13 @@ namespace BankOcr.source
                 return value.Single().ToString();
             }
 
-            return _illegal;
+            return Illegal;
         }
 
         private HashSet<int> GetNumericPossibilities()
         {
-            var candidates = headerReader.Read(_header);
-            var candidates2 = bodyReader.Read(_body);
+            var candidates = _headerReader.Read(_header);
+            var candidates2 = _bodyReader.Read(_body);
             var candidates3 = _footerReader.Read(_bottom);
 
             candidates.IntersectWith(candidates2);
