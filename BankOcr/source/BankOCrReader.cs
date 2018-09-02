@@ -112,15 +112,14 @@ namespace BankOcr.source
 
             return 0;
         }
-
-
+        
         public IEnumerable<string> ReadAccountsAsStrings(string[] lines)
         {
-            var readAccountsAsStrings = ReadAccounts(lines).Select(account => account.AsString()).ToArray();
+            var readAccountsAsStrings = BuildAccountComputations(lines).Select(account => account.AsString()).ToArray();
             return readAccountsAsStrings;
         }
 
-        public IList<AccountComputation> ReadAccounts(string[] lines)
+        public IList<AccountComputation> BuildAccountComputations(string[] lines)
         {
             ThrowsWhenAnyNonEmptyLineDoesNotHave27Characters(lines);
 

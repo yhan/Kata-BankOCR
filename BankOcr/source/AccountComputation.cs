@@ -123,7 +123,6 @@ namespace BankOcr.source
             return builder.ToString();
         }
 
-
         private IEnumerable<string> FormatAccount()
         {
             var computeCombinations = ComputeDigitCombinations();
@@ -146,7 +145,7 @@ namespace BankOcr.source
             }
         }
 
-        public bool IsValid()
+        private bool IsValid()
         {
             _checksum = DigitComputations.Sum(d => d.ChecksumWeight * d.Numerics.Single()) % 11;
             return _checksum == 0;
