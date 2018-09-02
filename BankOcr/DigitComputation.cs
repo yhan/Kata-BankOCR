@@ -11,13 +11,13 @@ namespace BankOcr
 
         private readonly FooterReader _footerReader;
 
-        private readonly BodyReader bodyReader;
-
-        private readonly HeaderReader headerReader;
-
         private readonly string _header;
 
         private readonly string _illegal = "?";
+
+        private readonly BodyReader bodyReader;
+
+        private readonly HeaderReader headerReader;
 
         public DigitComputation(string[] lines, int checksumWeight = 0)
         {
@@ -78,7 +78,7 @@ namespace BankOcr
 
         public override string ToString()
         {
-            return $"{string.Join(", ", Numerics)} q={string.Join(", ", AsQueue())}";
+            return $"{string.Join(", ", Numerics)}"; // q={string.Join(", ", AsQueue())}
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿namespace BankOcr
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
+namespace BankOcr
+{
     public class BankOCrReader
     {
         public int Read(string[] lines)
@@ -129,7 +129,7 @@
 
         private static void ThrowsWhenAnyNonEmptyLineDoesNotHave27Characters(string[] lines)
         {
-            IEnumerable<string> nonEmptyLines = lines.Where((l, index) => !IsThe4thLineOfEntry(index));
+            var nonEmptyLines = lines.Where((l, index) => !IsThe4thLineOfEntry(index));
 
             var linesNotContaining27Chars = nonEmptyLines.Where(x => x.Length != 27);
             if (linesNotContaining27Chars.Any())
@@ -141,10 +141,10 @@
         private List<AccountComputation> GetAllComputationForAllAccounts(string[] input)
         {
             var list = new List<AccountComputation>();
-            for (int lineIndex = 0; lineIndex < input.Length; lineIndex += 4)
+            for (var lineIndex = 0; lineIndex < input.Length; lineIndex += 4)
             {
                 var digits = new List<DigitComputation>(9);
-                for (int columnIndex = 0; columnIndex < 9; columnIndex++)
+                for (var columnIndex = 0; columnIndex < 9; columnIndex++)
                 {
                     var header = input[lineIndex].Substring(columnIndex * 3, 3);
                     var body = input[lineIndex + 1].Substring(columnIndex * 3, 3);
@@ -161,7 +161,7 @@
 
                     ThrowsWhenThe4thLineIsNotBlank(the4ThLine);
 
-                    digits.Add(new DigitComputation(new[] {header, body, footer },  9 - columnIndex));
+                    digits.Add(new DigitComputation(new[] {header, body, footer}, 9 - columnIndex));
                 }
 
                 list.Add(new AccountComputation(digits));

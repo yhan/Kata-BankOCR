@@ -50,31 +50,6 @@ namespace BankOcr
             Check.That(actual).IsEqualTo(expectedDigit);
         }
 
-        [Test]
-        public void Returns_2_digit_when_asciiart_digit_as_expected()
-        {
-            var expectedDigit = 8;
-            var digit = new DigitComputation(File.ReadAllLines($@"reference_asciiarts\{expectedDigit}.txt"));
-            var actualNumerics = digit.Numerics;
-
-            Check.That(actualNumerics).HasSize(2);
-            Check.That(actualNumerics).Contains(0,8);
-        }
-
-        [Test]
-        public void Guess_digit_yields_an_invalid_account_when_input_is_single_valid_account()
-        {
-            var bankOcrLine = new BankOCrReader();
-            var accountComputations = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\0123456789_correct_checksum_but_one_digit_flured.txt"));
-
-            Check.That(accountComputations).HasSize(1);
-            var computePossibleAccounts = accountComputations[0].ComputePossibleAccounts();
-            Check.That(computePossibleAccounts).HasSize(2);
-
-            Check.That(computePossibleAccounts[0].AsPrintable()).IsEqualTo("123456789");
-            Check.That(computePossibleAccounts[1].AsPrintable()).IsEqualTo("123456709 ERR");
-        }
-
 
         [Test]
         public void Account_123956189_is_whatever_an_invalid_account_event_after_guessing_digit()
@@ -118,6 +93,20 @@ namespace BankOcr
         }
 
         [Test]
+        public void Guess_digit_yields_an_invalid_account_when_input_is_single_valid_account()
+        {
+            var bankOcrLine = new BankOCrReader();
+            var accountComputations = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\0123456789_correct_checksum_but_one_digit_flured.txt"));
+
+            Check.That(accountComputations).HasSize(1);
+            var computePossibleAccounts = accountComputations[0].ComputePossibleAccounts();
+            Check.That(computePossibleAccounts).HasSize(2);
+
+            Check.That(computePossibleAccounts[0].AsPrintable()).IsEqualTo("123456789");
+            Check.That(computePossibleAccounts[1].AsPrintable()).IsEqualTo("123456709 ERR");
+        }
+
+        [Test]
         public void Return_account_number_123956189_when_file_contains_123956189()
         {
             var bankOcrLine = new BankOCrReader();
@@ -130,8 +119,7 @@ namespace BankOcr
         public void Return_corrected_account_number_when_a_digit_is_missing_a_bar()
         {
             var bankOcrLine = new BankOCrReader();
-            var accountAsString = bankOcrLine
-                .ReadAccountsAsStrings(File.ReadAllLines($@"reference_asciiarts\123956189_ILL.txt")).Single();
+            var accountAsString = bankOcrLine.ReadAccountsAsStrings(File.ReadAllLines($@"reference_asciiarts\123956189_ILL.txt")).Single();
 
             Check.That(accountAsString).IsEqualTo("123956188");
         }
@@ -141,8 +129,7 @@ namespace BankOcr
         public void Return_invalid_account_as_a_string_tailed_by_ERR()
         {
             var bankOcrLine = new BankOCrReader();
-            var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\444444444.txt"))
-                .Single();
+            var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\444444444.txt")).Single();
 
             Check.That(actualAccount.AsString()).IsEqualTo("444444444 ERR");
         }
@@ -164,6 +151,17 @@ namespace BankOcr
             var ocrReader = new BankOCrReader();
             var expected = ocrReader.Read(readAllLines);
             Check.That(expected).IsEqualTo(1);
+        }
+
+        [Test]
+        public void Returns_2_digit_when_asciiart_digit_as_expected()
+        {
+            var expectedDigit = 8;
+            var digit = new DigitComputation(File.ReadAllLines($@"reference_asciiarts\{expectedDigit}.txt"));
+            var actualNumerics = digit.Numerics;
+
+            Check.That(actualNumerics).HasSize(2);
+            Check.That(actualNumerics).Contains(0, 8);
         }
 
         [Test]
@@ -238,25 +236,28 @@ namespace BankOcr
             Check.That(expected).IsEqualTo(9);
         }
 
-       
         [Test]
         [Ignore("comeback")]
-        public void Returns_account_as_a_valid_account_when_input_using_488067775_with_one_defected_digit()
+        public void Returns_account_as_a_valid_account_when_input_using_488067775_with_one_defected_digit_8_should_be_corrected_0()
         {
             var bankOcrLine = new BankOCrReader();
-            var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\488067775.txt"))
-                .Single();
-            Check.That(actualAccount.AsString()).IsEqualTo("480067775");
+            var compuatations = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\488067775.txt"));
+
+            Check.That(compuatations).HasSize(1);
+            var accounts = compuatations[0].ComputePossibleAccounts();
+
+            Check.That(accounts).HasSize(4);
+
+            //Check.That(compuatations.AsString()).IsEqualTo("480067775");
         }
 
 
         [Test]
-        [Ignore("comeback")] 
+        [Ignore("comeback")]
         public void Returns_account_as_a_valid_account_when_input_using_490067775_with_one_defected_digit_causing_ERROR_9_should_be_understood_as_8()
         {
             var bankOcrLine = new BankOCrReader();
-            var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\490067775.txt"))
-                .Single();
+            var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\490067775.txt")).Single();
             Check.That(actualAccount.AsString()).IsEqualTo("480067775");
         }
 
@@ -266,16 +267,10 @@ namespace BankOcr
         {
             var bankOcrLine = new BankOCrReader();
 
-            Check.ThatCode(
-                    () =>
-                    {
-                        var actual = bankOcrLine
-                            .ReadAccountsAsStrings(File.ReadAllLines(
-                                $@"reference_asciiarts\invalidAccount_123956189_allLineShouldHaveExactly27Characters.txt"))
-                            .ToArray();
-                    })
-                .Throws<ArgumentException>()
-                .WithMessage("All lines should have exactly 27 characters. they are:   | _| _||_||_ | _   ||_||_|");
+            Check.ThatCode(() =>
+            {
+                var actual = bankOcrLine.ReadAccountsAsStrings(File.ReadAllLines($@"reference_asciiarts\invalidAccount_123956189_allLineShouldHaveExactly27Characters.txt")).ToArray();
+            }).Throws<ArgumentException>().WithMessage("All lines should have exactly 27 characters. they are:   | _| _||_||_ | _   ||_||_|");
         }
 
         [Test]
@@ -283,15 +278,7 @@ namespace BankOcr
         {
             var bankOcrLine = new BankOCrReader();
 
-            Check.ThatCode(
-                    () =>
-                    {
-                        bankOcrLine.ReadAccountsAsStrings(File.ReadAllLines(
-                                $@"reference_asciiarts\invalidAccount_123956189_forAllDigitSource_the_4th_line_should_be_blank.txt"))
-                            .ToArray();
-                    })
-                .Throws<ArgumentException>()
-                .WithMessage("Each account is 4 lines long");
+            Check.ThatCode(() => { bankOcrLine.ReadAccountsAsStrings(File.ReadAllLines($@"reference_asciiarts\invalidAccount_123956189_forAllDigitSource_the_4th_line_should_be_blank.txt")).ToArray(); }).Throws<ArgumentException>().WithMessage("Each account is 4 lines long");
         }
     }
 }

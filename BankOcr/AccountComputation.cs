@@ -8,14 +8,104 @@ namespace BankOcr
     {
         private int _checksum;
 
-        public AccountComputation(List<DigitComputation> digits)
+        public AccountComputation(List<DigitComputation> digitComputations)
         {
-            Digits = digits;
+            DigitComputations = digitComputations;
         }
 
-        public List<DigitComputation> Digits { get; }
+        public List<DigitComputation> DigitComputations { get; }
 
-        public List<int[]> Combinations { get; } = new List<int[]>();
+        public List<List<Digit>> ComputeDigitCombinations()
+        {
+            var trees = BuildTrees(DigitComputations);
+            var allCombinations = new List<List<Digit>>();
+            foreach (var tree in trees)
+            {
+                var node = tree.Head;
+                while (!tree.HasBeenTotallyVisited())
+                {
+                    var digits = new List<Digit>();
+
+                    while (node.HasChild())
+                    {
+                        digits.Add(node.Value);
+
+                        node = node.Children.First();
+
+                        if (node.Value.Weight == 1)
+                        {
+                            tree.RemoveOneLeaf();
+
+                            RemoveUntilFindChild(node);
+                            break;
+                        }
+                    }
+
+                    digits.Add(node.Value);
+                    node = tree.Head;
+
+                    allCombinations.Add(digits);
+                }
+            }
+
+            return allCombinations;
+        }
+
+        private static void RemoveUntilFindChild(Node<Digit> node)
+        {
+            if (node.Parent == null)
+            {
+                return;
+            }
+
+            node.Parent.Remove(node);
+
+            if (!node.Parent.HasChild())
+            {
+                RemoveUntilFindChild(node.Parent);
+            }
+        }
+
+        private static IEnumerable<Tree<Digit>> BuildTrees(IReadOnlyList<DigitComputation> digitComputations)
+        {
+            var firstDigit = digitComputations[0];
+            var numericsOf1StDigit = firstDigit.Numerics.ToArray();
+
+            var trees = new List<Tree<Digit>>(firstDigit.Numerics.Count);
+
+            for (var i = 0; i < firstDigit.Numerics.Count; i++)
+            {
+                var head = new Node<Digit>(new Digit(numericsOf1StDigit[i], firstDigit.ChecksumWeight), null);
+                var tree = new Tree<Digit>(head);
+
+                var currentNodes = new[] { head };
+
+                for (var j = 1; j < digitComputations.Count; j++)
+                {
+                    var currentLevel = digitComputations[j];
+
+                    var accumulation = new List<Node<Digit>>();
+                    foreach (var node in currentNodes)
+                    {
+                        var toBeAdded = currentLevel.Numerics.Select(x => new Node<Digit>(new Digit(x, currentLevel.ChecksumWeight), node)).ToList();
+                        node.AddChildren(toBeAdded);
+
+                        accumulation.AddRange(toBeAdded);
+                    }
+
+                    currentNodes = accumulation.ToArray();
+                    if (currentLevel.ChecksumWeight == 1)
+                    {
+                        //last level
+                        tree.SetTotalLeafsNumber(currentNodes.Length);
+                    }
+                }
+
+                trees.Add(tree);
+            }
+
+            return trees;
+        }
 
         public string AsString()
         {
@@ -36,11 +126,11 @@ namespace BankOcr
 
         private IEnumerable<string> FormatAccount()
         {
-            var computeCombinations = ComputeCombinations();
+            var computeCombinations = ComputeDigitCombinations();
 
             foreach (var computeCombination in computeCombinations)
             {
-                var one = string.Join(string.Empty, computeCombination.Select(x => { return x.ToString(); }));
+                var one = string.Join(string.Empty, computeCombination.Select(x => { return x.Numeric.ToString(); }));
 
                 if (IsIll())
                 {
@@ -58,13 +148,13 @@ namespace BankOcr
 
         public bool IsValid()
         {
-            _checksum = Digits.Sum(d => d.ChecksumWeight * d.Numerics.Single()) % 11;
+            _checksum = DigitComputations.Sum(d => d.ChecksumWeight * d.Numerics.Single()) % 11;
             return _checksum == 0;
         }
 
         private bool IsIll()
         {
-            return Digits.Any(x => x.IsIllegal);
+            return DigitComputations.Any(x => x.IsIllegal);
         }
 
         public List<Account> ComputePossibleAccounts()
@@ -79,178 +169,6 @@ namespace BankOcr
             }
 
             return accounts;
-        }
-
-
-        public List<List<int>> ComputeCombinations()
-        {
-            var combinations = new List<List<int>>();
-
-            while (combinations.All(x => x.Count != 9))
-            {
-                var oneCombination = new List<int>();
-                combinations.Add(oneCombination);
-                foreach (var digit in Digits)
-                {
-                    var numeric = 0;
-                    var queue = digit.AsQueue();
-
-
-                    if (queue.Count == 1)
-                    {
-                        numeric = queue.Dequeue();
-
-                        combinations.ForEach(x => x.Add(numeric));
-                        continue;
-                    }
-
-                    while (queue.Count > 0)
-                    {
-                        numeric = queue.Dequeue();
-
-                        if (AllHaveTheSameLength(combinations))
-                        {
-                            var newCombination = Clone(oneCombination);
-
-                            combinations.Add(newCombination);
-
-                            oneCombination.Add(numeric);
-                        }
-                        else
-                        {
-                            SmallestCombination(combinations).Add(numeric);
-                        }
-                    }
-                }
-            }
-
-            return combinations;
-        }
-
-        public List<List<Digit>> ComputeDigitCombinations()
-        {
-            var combinations = new List<List<Digit>>();
-
-            while (combinations.All(x => x.Count != 9))
-            {
-                var oneCombination = new List<Digit>();
-                combinations.Add(oneCombination);
-
-                var weight = 9;
-                foreach (var digit in Digits)
-                {
-                    var numeric = 0;
-                    var queue = digit.AsQueue();
-
-                    if (queue.Count == 1)
-                    {
-                        numeric = queue.Dequeue();
-
-                        combinations.ForEach(x => x.Add(new Digit(numeric, weight)));
-                        continue;
-                    }
-
-                    while (queue.Count > 0)
-                    {
-                        numeric = queue.Dequeue();
-                        var cleanDigit = new Digit(numeric, weight);
-
-                        if (AllHaveTheSameLength(combinations))
-                        {
-                            var newCombination = Clone(oneCombination);
-
-                            combinations.Add(newCombination);
-
-                            oneCombination.Add(cleanDigit);
-                        }
-                        else
-                        {
-                            SmallestCombination(combinations).Add(cleanDigit);
-                        }
-                    }
-
-                    weight--;
-                }
-            }
-
-            return combinations;
-        }
-
-        private bool AllHaveTheSameLength<T>(List<List<T>> combinations)
-        {
-            var count = combinations.First().Count;
-            return combinations.All(x => x.Count == count);
-        }
-
-        private static List<T> SmallestCombination<T>(List<List<T>> combinations)
-        {
-            var min = combinations.Min(x => x.Count);
-            return combinations.Single(x => x.Count == min);
-        }
-
-
-        private static List<T> Clone<T>(List<T> oneCombination) where T : struct
-        {
-            var cloned = new List<T>();
-            oneCombination.ForEach(x => cloned.Add(x));
-            return cloned;
-        }
-    }
-
-    public class Account
-    {
-        private readonly List<Digit> _cleanDigits;
-
-        public Account(List<Digit> cleanDigits)
-        {
-            _cleanDigits = cleanDigits;
-        }
-
-
-        public bool IsValid()
-        {
-            var checksum = _cleanDigits.Sum(d => d.Weight * d.Numeric) % 11;
-            return checksum == 0;
-        }
-
-        private bool IsIll()
-        {
-            return _cleanDigits.Any(x => x.IsIllegal);
-        }
-
-        public string AsPrintable()
-        {
-            var one = string.Join(string.Empty, _cleanDigits.Select(x => { return x.ToString(); }));
-
-            if (IsIll())
-            {
-                one = one + " ILL";
-            }
-
-            if (!IsValid())
-            {
-                one = one + " ERR";
-            }
-
-            return one;
-        }
-    }
-
-    public struct Digit
-    {
-        public int Numeric { get; }
-        public int Weight { get; }
-        public bool IsIllegal => false; //TODO 
-
-        public Digit(int numeric, int weight)
-        {
-            Numeric = numeric;
-            Weight = weight;
-        }
-
-        public override string ToString()
-        {
-            return Numeric.ToString();
         }
     }
 }
