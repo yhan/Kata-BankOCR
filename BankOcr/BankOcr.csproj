@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountComputation.cs" />
+    <Compile Include="AccountDigitsCombinationsShould.cs" />
     <Compile Include="BankOcrShould.cs" />
     <Compile Include="BodyReader.cs" />
     <Compile Include="DigitComputation.cs" />

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NFluent;
@@ -8,35 +7,9 @@ using NUnit.Framework;
 namespace BankOcr
 {
     [TestFixture]
-    public class AccountDigitsCombinationsShould
-    {
-        [Test]
-        public void Account_490067775_when_9_can_be_considered_as_8()
-        {
-            var account = new AccountComputation(new List<DigitComputation>
-            {
-                new DigitComputation(new HashSet<int> {4}, 9),
-                new DigitComputation(new HashSet<int> {9, 8}, 8),
-                new DigitComputation(new HashSet<int> {0}, 7),
-                new DigitComputation(new HashSet<int> {0}, 6),
-                new DigitComputation(new HashSet<int> {6}, 5),
-                new DigitComputation(new HashSet<int> {7}, 4),
-                new DigitComputation(new HashSet<int> {7}, 3),
-                new DigitComputation(new HashSet<int> {7}, 2),
-                new DigitComputation(new HashSet<int> {5}, 1)
-            });
-
-            var combinations = account.ComputeCombinations();
-            Check.That(combinations).HasSize(2);
-            Check.That(combinations)
-                .Contains(new List<int> {4, 9, 0, 0, 6, 7, 7, 7, 5}, new List<int> {4, 8, 0, 0, 6, 7, 7, 7, 5});
-        }
-    }
-
-    [TestFixture]
     public class BankOcrShould
     {
-        [TestCase("123956189")]
+        [TestCase("480067775")]
         //[Ignore("")]
         public void CheckHelper(string account)
         {
@@ -68,7 +41,7 @@ namespace BankOcr
         [TestCase(5)]
         [TestCase(6)]
         [TestCase(7)]
-        [TestCase(8)]
+        //[TestCase(8)]
         [TestCase(9)]
         public void Returns_digit_when_asciiart_digit_as_expected(int expectedDigit)
         {
@@ -76,6 +49,32 @@ namespace BankOcr
             var actual = digit.Numerics.Single();
             Check.That(actual).IsEqualTo(expectedDigit);
         }
+
+        [Test]
+        public void Returns_2_digit_when_asciiart_digit_as_expected()
+        {
+            var expectedDigit = 8;
+            var digit = new DigitComputation(File.ReadAllLines($@"reference_asciiarts\{expectedDigit}.txt"));
+            var actualNumerics = digit.Numerics;
+
+            Check.That(actualNumerics).HasSize(2);
+            Check.That(actualNumerics).Contains(0,8);
+        }
+
+        [Test]
+        public void Guess_digit_yields_an_invalid_account_when_input_is_single_valid_account()
+        {
+            var bankOcrLine = new BankOCrReader();
+            var accountComputations = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\0123456789_correct_checksum_but_one_digit_flured.txt"));
+
+            Check.That(accountComputations).HasSize(1);
+            var computePossibleAccounts = accountComputations[0].ComputePossibleAccounts();
+            Check.That(computePossibleAccounts).HasSize(2);
+
+            Check.That(computePossibleAccounts[0].AsPrintable()).IsEqualTo("123456789");
+            Check.That(computePossibleAccounts[1].AsPrintable()).IsEqualTo("123456709 ERR");
+        }
+
 
         [Test]
         public void Account_123956189_is_whatever_an_invalid_account_event_after_guessing_digit()
@@ -239,17 +238,7 @@ namespace BankOcr
             Check.That(expected).IsEqualTo(9);
         }
 
-        [Test]
-        public void Returns_account_as_1_questionMark_3956189_when_input_using_123956189_ill()
-        {
-            var bankOcrLine = new BankOCrReader();
-            var actualAccount = bankOcrLine
-                .ReadAccounts(
-                    File.ReadAllLines($@"reference_asciiarts\0123456789_correct_checksum_but_one_digit_flured.txt"))
-                .Single();
-            Check.That(actualAccount.AsString()).IsEqualTo("1234567?9 ILL");
-        }
-
+       
         [Test]
         [Ignore("comeback")]
         public void Returns_account_as_a_valid_account_when_input_using_488067775_with_one_defected_digit()
@@ -262,9 +251,8 @@ namespace BankOcr
 
 
         [Test]
-        //[Ignore("comeback")]
-        public void
-            Returns_account_as_a_valid_account_when_input_using_490067775_with_one_defected_digit_causing_ERROR()
+        [Ignore("comeback")] 
+        public void Returns_account_as_a_valid_account_when_input_using_490067775_with_one_defected_digit_causing_ERROR_9_should_be_understood_as_8()
         {
             var bankOcrLine = new BankOCrReader();
             var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\490067775.txt"))

@@ -11,14 +11,13 @@ namespace BankOcr
 
         private readonly FooterReader _footerReader;
 
-        private readonly string _header;
-
-        private readonly string _illegal = "?";
-
         private readonly BodyReader bodyReader;
 
         private readonly HeaderReader headerReader;
-        private Queue<int> _asQueue;
+
+        private readonly string _header;
+
+        private readonly string _illegal = "?";
 
         public DigitComputation(string[] lines, int checksumWeight = 0)
         {

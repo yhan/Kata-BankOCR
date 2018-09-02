@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace BankOcr
+﻿namespace BankOcr
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class BankOCrReader
     {
         public int Read(string[] lines)
@@ -120,32 +120,31 @@ namespace BankOcr
             return readAccountsAsStrings;
         }
 
-        public IEnumerable<AccountComputation> ReadAccounts(string[] lines)
+        public IList<AccountComputation> ReadAccounts(string[] lines)
         {
             ThrowsWhenAnyNonEmptyLineDoesNotHave27Characters(lines);
 
-            return Parse(lines);
+            return GetAllComputationForAllAccounts(lines);
         }
 
         private static void ThrowsWhenAnyNonEmptyLineDoesNotHave27Characters(string[] lines)
         {
-            var nonEmptyLines = lines.Where((l, index) => !IsThe4thLineOfEntry(index));
+            IEnumerable<string> nonEmptyLines = lines.Where((l, index) => !IsThe4thLineOfEntry(index));
 
             var linesNotContaining27Chars = nonEmptyLines.Where(x => x.Length != 27);
             if (linesNotContaining27Chars.Any())
             {
-                throw new ArgumentException(
-                    $"All lines should have exactly 27 characters. they are: {string.Join(Environment.NewLine, linesNotContaining27Chars)}");
+                throw new ArgumentException($"All lines should have exactly 27 characters. they are: {string.Join(Environment.NewLine, linesNotContaining27Chars)}");
             }
         }
 
-        private List<AccountComputation> Parse(string[] input)
+        private List<AccountComputation> GetAllComputationForAllAccounts(string[] input)
         {
             var list = new List<AccountComputation>();
-            for (var lineIndex = 0; lineIndex < input.Length; lineIndex += 4)
+            for (int lineIndex = 0; lineIndex < input.Length; lineIndex += 4)
             {
                 var digits = new List<DigitComputation>(9);
-                for (var columnIndex = 0; columnIndex < 9; columnIndex++)
+                for (int columnIndex = 0; columnIndex < 9; columnIndex++)
                 {
                     var header = input[lineIndex].Substring(columnIndex * 3, 3);
                     var body = input[lineIndex + 1].Substring(columnIndex * 3, 3);
@@ -162,7 +161,7 @@ namespace BankOcr
 
                     ThrowsWhenThe4thLineIsNotBlank(the4ThLine);
 
-                    digits.Add(new DigitComputation(new[] {header, body, footer}, 9 - columnIndex));
+                    digits.Add(new DigitComputation(new[] {header, body, footer },  9 - columnIndex));
                 }
 
                 list.Add(new AccountComputation(digits));
