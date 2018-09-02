@@ -33,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build.Tasks.v4.0" />
     <Reference Include="NFluent, Version=2.3.1.194, Culture=neutral, PublicKeyToken=18828b37b84b1437, processorArchitecture=MSIL">
       <HintPath>..\packages\NFluent.2.3.1\lib\net45\NFluent.dll</HintPath>
     </Reference>
@@ -49,14 +50,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Account.cs" />
+    <Compile Include="AccountComputation.cs" />
     <Compile Include="BankOcrShould.cs" />
     <Compile Include="BodyReader.cs" />
-    <Compile Include="Digit.cs" />
+    <Compile Include="DigitComputation.cs" />
     <Compile Include="FooterReader.cs" />
     <Compile Include="HeaderReader.cs" />
     <Compile Include="IOcrLineReader.cs" />
-    <Compile Include="OcrReader.cs" />
+    <Compile Include="BankOCrReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

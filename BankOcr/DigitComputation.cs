@@ -1,9 +1,9 @@
-﻿namespace BankOcr
-{
-    using System.Collections.Generic;
-    using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
-    public class Digit
+namespace BankOcr
+{
+    public class DigitComputation
     {
         private readonly string _body;
 
@@ -18,8 +18,9 @@
         private readonly BodyReader bodyReader;
 
         private readonly HeaderReader headerReader;
+        private Queue<int> _asQueue;
 
-        public Digit(string[] lines, int checksumWeight = 0)
+        public DigitComputation(string[] lines, int checksumWeight = 0)
         {
             ChecksumWeight = checksumWeight;
 
@@ -34,21 +35,27 @@
             Numerics = GetNumericPossibilities();
         }
 
-        public HashSet<int> Numerics { get; }
+        //For test
+        public DigitComputation(ISet<int> numerics, int checksumWeight)
+        {
+            ChecksumWeight = checksumWeight;
+            Numerics = numerics;
+        }
+
+        public ISet<int> Numerics { get; set; }
 
         public int ChecksumWeight { get; }
 
-        public bool IsIllegal
+        public bool IsIllegal => GetNumericAsString() == _illegal;
+
+        public Queue<int> AsQueue()
         {
-            get
-            {
-                return GetNumericAsString() == _illegal;
-            }
+            return new Queue<int>(Numerics);
         }
 
         public string GetNumericAsString()
         {
-            HashSet<int> value = GetNumericPossibilities();
+            var value = GetNumericPossibilities();
             if (value.Count == 1)
             {
                 return value.Single().ToString();
@@ -67,6 +74,12 @@
             candidates.IntersectWith(candidates3);
 
             return candidates;
+        }
+
+
+        public override string ToString()
+        {
+            return $"{string.Join(", ", Numerics)} q={string.Join(", ", AsQueue())}";
         }
     }
 }

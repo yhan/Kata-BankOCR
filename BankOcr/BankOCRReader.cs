@@ -1,10 +1,10 @@
-﻿namespace BankOcr
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-    public class OcrReader
+namespace BankOcr
+{
+    public class BankOCrReader
     {
         public int Read(string[] lines)
         {
@@ -120,7 +120,7 @@
             return readAccountsAsStrings;
         }
 
-        public IEnumerable<Account> ReadAccounts(string[] lines)
+        public IEnumerable<AccountComputation> ReadAccounts(string[] lines)
         {
             ThrowsWhenAnyNonEmptyLineDoesNotHave27Characters(lines);
 
@@ -129,22 +129,23 @@
 
         private static void ThrowsWhenAnyNonEmptyLineDoesNotHave27Characters(string[] lines)
         {
-            IEnumerable<string> nonEmptyLines = lines.Where((l, index) => !IsThe4thLineOfEntry(index));
+            var nonEmptyLines = lines.Where((l, index) => !IsThe4thLineOfEntry(index));
 
             var linesNotContaining27Chars = nonEmptyLines.Where(x => x.Length != 27);
             if (linesNotContaining27Chars.Any())
             {
-                throw new ArgumentException($"All lines should have exactly 27 characters. they are: {string.Join(Environment.NewLine, linesNotContaining27Chars)}");
+                throw new ArgumentException(
+                    $"All lines should have exactly 27 characters. they are: {string.Join(Environment.NewLine, linesNotContaining27Chars)}");
             }
         }
 
-        private List<Account> Parse(string[] input)
+        private List<AccountComputation> Parse(string[] input)
         {
-            var list = new List<Account>();
-            for (int lineIndex = 0; lineIndex < input.Length; lineIndex += 4)
+            var list = new List<AccountComputation>();
+            for (var lineIndex = 0; lineIndex < input.Length; lineIndex += 4)
             {
-                var digits = new List<Digit>(9);
-                for (int columnIndex = 0; columnIndex < 9; columnIndex++)
+                var digits = new List<DigitComputation>(9);
+                for (var columnIndex = 0; columnIndex < 9; columnIndex++)
                 {
                     var header = input[lineIndex].Substring(columnIndex * 3, 3);
                     var body = input[lineIndex + 1].Substring(columnIndex * 3, 3);
@@ -161,10 +162,10 @@
 
                     ThrowsWhenThe4thLineIsNotBlank(the4ThLine);
 
-                    digits.Add(new Digit(new[] {header, body, footer },  9 - columnIndex));
+                    digits.Add(new DigitComputation(new[] {header, body, footer}, 9 - columnIndex));
                 }
 
-                list.Add(new Account(digits));
+                list.Add(new AccountComputation(digits));
             }
 
             return list;
