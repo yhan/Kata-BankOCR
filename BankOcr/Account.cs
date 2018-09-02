@@ -1,9 +1,7 @@
 ﻿namespace BankOcr
 {
     using System.Collections.Generic;
-    using System.Data.Odbc;
     using System.Linq;
-    using System.Runtime.Remoting;
 
     public class Account
     {
@@ -28,45 +26,10 @@
 
             if (!IsValid())
             {
-                foreach (var digit in DigitsValues)
-                {
-                    if (digit.GetNumeric() == 9)
-                    {
-                        if (CheckAndReplaceValue(digit, out var asString))
-                        {
-                            return asString;
-                        }
-                    }
-
-                    if (digit.GetNumeric() == 8)
-                    {
-                        digit.ForceValue(0);
-                        if (IsValid())
-                        {
-                            return FormatAccount();
-                        }
-                        digit.ForceValue(null);
-                    }
-                }
                 return t + " ERR";
             }
 
             return t;
-        }
-
-        private bool CheckAndReplaceValue(Digit digit, out string asString)
-        {
-            digit.ForceValue(8);
-            if (IsValid())
-            {
-                {
-                    asString = FormatAccount();
-                    return true;
-                }
-            }
-
-            digit.ForceValue(null);
-            return false;
         }
 
         private string FormatAccount()
@@ -74,20 +37,14 @@
             return string.Join(string.Empty, this.DigitsValues.Select(
                 x =>
                     {
-                        var numeric = x.GetNumeric();
-                        if (!numeric.HasValue)
-                        {
-                            return "?";
-                        }
-                        return numeric.ToString();
+                        return x.GetNumericAsString();
                     }));
         }
 
         public bool IsValid()
         {
-            this._checksum = DigitsValues.Sum(d => d.ChecksumWeight * d.GetNumeric().Value) % 11;
-            var isValid = _checksum == 0;
-            return isValid;
+            this._checksum = DigitsValues.Sum(d => d.ChecksumWeight * d.Numeric.Value) % 11;
+            return _checksum == 0;
         }
 
         private bool IsIll()

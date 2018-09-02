@@ -16,7 +16,12 @@
                 case " _|":
                     return new HashSet<int> { 2, 3 };
                 case "|_|":
-                    return new HashSet<int> { 4, 8, 9 };
+                    return new HashSet<int>
+                               {
+                                   4, 8, 9,
+                                   /*correction*/
+                                   0
+                               };
                 case "|_ ":
                     return new HashSet<int> { 5, 6 };
             }

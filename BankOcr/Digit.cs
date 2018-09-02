@@ -1,80 +1,88 @@
 ﻿namespace BankOcr
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using NUnit.Framework.Internal.Execution;
-
     public class Digit
     {
-        public int ChecksumWeight { get; }
-
-        private readonly string _header;
-
         private readonly string _body;
 
         private readonly string _bottom;
 
-        private readonly HeaderReader headerReader;
-        private readonly BodyReader bodyReader;
         private readonly FooterReader _footerReader;
 
-        private readonly string _illegal = "ILL";
+        private readonly string _header;
+
+        private readonly string _illegal = "?";
+
+        private readonly BodyReader bodyReader;
+
+        private readonly HeaderReader headerReader;
 
         public Digit(string[] lines, int checksumWeight = 0)
         {
             ChecksumWeight = checksumWeight;
 
-            this._header = lines[0];
-            this._body = lines[1];
-            this._bottom = lines[2];
+            _header = lines[0];
+            _body = lines[1];
+            _bottom = lines[2];
 
-            this.headerReader = new HeaderReader();
-            this.bodyReader = new BodyReader();
-            this._footerReader = new FooterReader();
+            headerReader = new HeaderReader();
+            bodyReader = new BodyReader();
+            _footerReader = new FooterReader();
+
+            Numeric = GetNumeric();
         }
+
+        public int? Numeric { get; }
+
+        public int ChecksumWeight { get; }
+
+        public bool IsIllegal
+        {
+            get
+            {
+                return GetNumericAsString() == _illegal;
+            }
+        }
+
+        public HashSet<int> PossibleNumeric { get; private set; }
 
         public string GetNumericAsString()
         {
-            var candidates1 = this.headerReader.Read(this._header);
-            var candidates2 = this.bodyReader.Read(this._body);
-            var candidates3 = this._footerReader.Read(this._bottom);
+            var value = GetNumeric();
+            if (value.HasValue)
+            {
+                return value.ToString();
+            }
 
-            candidates1.IntersectWith(candidates2);
-            candidates1.IntersectWith(candidates3);
-
-            return candidates1.Count == 1 ? candidates1.Single().ToString() : _illegal;
+            return _illegal;
         }
 
-        public int? GetNumeric()
+        private int? GetNumeric()
         {
-            var numericAsString = GetNumericAsString();
-            if (numericAsString != _illegal)
+            var candidates = headerReader.Read(_header);
+            var candidates2 = bodyReader.Read(_body);
+            var candidates3 = _footerReader.Read(_bottom);
+
+            candidates.IntersectWith(candidates2);
+            candidates.IntersectWith(candidates3);
+
+            var candidatesCount = candidates.Count;
+            if (candidatesCount == 1)
             {
-                return _forcedValue ?? int.Parse(numericAsString);
+                return candidates.Single();
             }
+
+            if (candidatesCount == 0)
+            {
+                return null;
+            }
+
+            // More than 1
+            PossibleNumeric = candidates;
+
             return null;
         }
-
-        public override string ToString()
-        {
-            var numeric = GetNumericAsString();
-            if (this.IsIllegal)
-            {
-                return "?";
-            }
-
-            return numeric.ToString();
-        }
-
-        public bool IsIllegal => GetNumericAsString() == _illegal;
-
-        public void ForceValue(int? value)
-        {
-            _forcedValue = value;
-        }
-
-        private int? _forcedValue;
     }
 }
