@@ -11,6 +11,7 @@
     [TestFixture]
     public class BankOcrShould
     {
+
         [TestCase("444444444")]
         [Ignore("")]
         public void CheckHelper(string account)
@@ -215,15 +216,6 @@
             var ocrReader = new OcrReader();
             var expected = ocrReader.ReadAccountsAsStrings(readAllLines);
             Check.That(expected).Contains("123456789", "444444444 ERR", "000000000");
-        }
-
-
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            var dir = Path.GetDirectoryName(typeof(BankOcrShould).Assembly.Location);
-            TestContext.WriteLine($"Current dir = '{dir}'");
-            Environment.CurrentDirectory = dir;
         }
 
         [TestCase(0)]
