@@ -52,18 +52,30 @@
     <Compile Include="Account.cs" />
     <Compile Include="BankOcrShould.cs" />
     <Compile Include="BodyReader.cs" />
+    <Compile Include="BodyWithCompensation.cs" />
+    <Compile Include="Compensator.cs" />
+    <Compile Include="CompensatorShould.cs" />
     <Compile Include="Digit.cs" />
     <Compile Include="FooterReader.cs" />
+    <Compile Include="FooterWithCompensation.cs" />
     <Compile Include="HeaderReader.cs" />
+    <Compile Include="HeaderReaderWithCompensation.cs" />
     <Compile Include="IOcrLineReader.cs" />
     <Compile Include="OcrReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Setup.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="reference_asciiarts\1_ill_1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="reference_asciiarts\2_ill.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="reference_asciiarts\444444444.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

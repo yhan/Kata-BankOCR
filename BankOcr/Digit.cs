@@ -35,11 +35,14 @@
             this._footerReader = new FooterReader();
         }
 
+        public string ReplacedHeader { get; set; }
+        public string ReplacedBottom { get; set; }
+
         public string GetNumericAsString()
         {
-            var candidates1 = this.headerReader.Read(this._header);
-            var candidates2 = this.bodyReader.Read(this._body);
-            var candidates3 = this._footerReader.Read(this._bottom);
+            var candidates1 = this.headerReader.Read(ReplacedHeader ?? Header);
+            var candidates2 = this.bodyReader.Read(_body);
+            var candidates3 = this._footerReader.Read(ReplacedBottom ?? Bottom);
 
             candidates1.IntersectWith(candidates2);
             candidates1.IntersectWith(candidates3);
@@ -69,6 +72,16 @@
         }
 
         public bool IsIllegal => GetNumericAsString() == _illegal;
+
+        public string Header
+        {
+            get { return _header; }
+        }
+
+        public string Bottom
+        {
+            get { return _bottom; }
+        }
 
         public void ForceValue(int? value)
         {

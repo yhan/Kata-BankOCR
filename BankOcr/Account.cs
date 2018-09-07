@@ -32,10 +32,12 @@
                 {
                     if (digit.GetNumeric() == 9)
                     {
-                        if (CheckAndReplaceValue(digit, out var asString))
+                        digit.ForceValue(8);
+                        if (IsValid())
                         {
-                            return asString;
+                            return FormatAccount();
                         }
+                        digit.ForceValue(null);
                     }
 
                     if (digit.GetNumeric() == 8)
@@ -52,21 +54,6 @@
             }
 
             return t;
-        }
-
-        private bool CheckAndReplaceValue(Digit digit, out string asString)
-        {
-            digit.ForceValue(8);
-            if (IsValid())
-            {
-                {
-                    asString = FormatAccount();
-                    return true;
-                }
-            }
-
-            digit.ForceValue(null);
-            return false;
         }
 
         private string FormatAccount()
