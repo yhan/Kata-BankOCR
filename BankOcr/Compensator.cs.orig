@@ -1,0 +1,107 @@
+<<<<<<< HEAD
+﻿using System;
+using System.Collections.Generic;
+
+namespace BankOcr
+{
+    internal class Compensator
+    {
+        internal IList<int> Convert(Digit digit)
+        {
+            var candidates = new List<int>();
+            var replaceAscii = '_';
+
+            for (var i = 0;i < digit.Header.Length; i++)
+            {
+                var header = digit.Header.ToCharArray();
+                if (header[i] == ' ')
+                {
+                    header[i] = replaceAscii;
+                    digit.ReplacedHeader = new string(header);
+                    try
+                    {
+                        var numericAscii = digit.GetNumeric();
+                        if (numericAscii.HasValue)
+                        {
+                            candidates.Add(numericAscii.Value);
+                        }
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+                }
+            }
+            digit.ReplacedHeader = null;
+            var replaceAscii2 = '|';
+            for (var i = 0; i < digit.Bottom.Length; i++)
+            {
+                var bottom = digit.Bottom.ToCharArray();
+                if (bottom[i] == ' ')
+                {
+                    bottom[i] = replaceAscii2;
+                    digit.ReplacedBottom = new string(bottom);
+                    try
+                    {
+                        var numericAscii = digit.GetNumeric();
+                        if (numericAscii.HasValue)
+                        {
+                            candidates.Add(numericAscii.Value);
+                        }
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+                }
+            }
+            return candidates;
+=======
+﻿namespace BankOcr
+{
+    internal class Compensator
+    {
+        private readonly string[] _readAllLines;
+
+        private HeaderReaderWithCompensation _headerReaderWithCompensation;
+
+        private BodyWithCompensation _bodyReaderWithCompensation;
+
+        private FooterWithCompensation _footerReaderWithCompensation;
+
+        private string _header;
+
+        private string _body;
+
+        private string _bottom;
+
+        public Compensator(string[] lines)
+        {
+            _readAllLines = lines;
+
+
+            this._header = lines[0];
+            this._body = lines[1];
+            this._bottom = lines[2];
+
+
+            this._headerReaderWithCompensation = new HeaderReaderWithCompensation();
+            this._bodyReaderWithCompensation = new BodyWithCompensation();
+            this._footerReaderWithCompensation = new FooterWithCompensation();
+        }
+
+        internal int Convert()
+        {
+            var candidates1 = this._headerReaderWithCompensation.Read(_header);
+            var candidates2 = this._bodyReaderWithCompensation.Read(this._body);
+            var candidates3 = this._footerReaderWithCompensation.Read(this._bottom);
+
+            candidates1.IntersectWith(candidates2);
+            candidates1.IntersectWith(candidates3);
+
+
+            return 1;
+>>>>>>> origin/master
+        }
+    }
+}
