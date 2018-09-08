@@ -9,8 +9,71 @@
     using NUnit.Framework;
 
     [TestFixture]
+    public class DigitShould
+    {
+        //[TestCase(0)]
+        //[TestCase(1)]
+        //[TestCase(2)]
+        //[TestCase(3)]
+        //[TestCase(4)]
+        //[TestCase(5)]
+        //[TestCase(6)]
+        //[TestCase(7)]
+        //[TestCase(8)]
+        //[TestCase(9)]
+        [Test]
+        public void Return_digit_as_one_line()
+        {
+            var expectedDigit = 1;
+            var digit = new Digit(File.ReadAllLines($@"reference_asciiarts\{expectedDigit}.txt"));
+            var actual = digit.GetDigitAsStringInOneLine();
+            Check.That(actual).IsEqualTo("     |  |");
+        }
+
+    }
+
+
+    [TestFixture]
     public class BankOcrShould
     {
+        [Test]
+        [Ignore("account level to be fixed afterward")]
+        public void Returns_account_as_a_valid_account_when_input_using_490067775_with_one_flur_digit()
+        {
+            var bankOcrLine = new OcrReader();
+            var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\490067775.txt")).Single();
+            Check.That(actualAccount.AsString()).IsEqualTo("480067775");
+        }
+
+        [Test]
+        [Ignore("account level to be fixed afterward")]
+        public void Returns_account_as_a_valid_account_when_a_valid_digit_results_an_invalid_account()
+        {
+            var bankOcrLine = new OcrReader();
+            var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\488067775.txt")).Single();
+            Check.That(actualAccount.AsString()).IsEqualTo("480067775");
+        }
+
+        [Test]
+        [Ignore("account level to be fixed afterward")]
+        public void Return_corrected_account_number_when_a_digit_is_missing_a_bar()
+        {
+            var bankOcrLine = new OcrReader();
+            var accountAsString = bankOcrLine.ReadAccountsAsStrings(File.ReadAllLines($@"reference_asciiarts\123956189_ILL.txt")).Single();
+
+            Check.That(accountAsString).IsEqualTo("123956188");
+        }
+
+        [Test]
+        public void Correct_illed_1_to_a_valid_1()
+        {
+            var digit = new Digit(File.ReadAllLines($@"reference_asciiarts\1_ILL.txt"));
+            Check.That(digit.IsIllegal).IsTrue();
+            Check.That(digit.GetNumeric()).IsNull();
+
+            Check.That(digit.GetCorrectedNumeric()).ContainsExactly(1);
+        }
+
         [TestCase("444444444")]
         [Ignore("")]
         public void CheckHelper(string account)
@@ -28,7 +91,6 @@
         }
 
 
-
         [Test]
         public void Return_true_when_Digit_is_illegile()
         {
@@ -38,22 +100,6 @@
             Check.That(digit.ToString()).IsEqualTo("?");
         }
 
-
-        [Test]
-        public void Returns_account_as_a_valid_account_when_input_using_490067775_with_one_flur_digit()
-        {
-            var bankOcrLine = new OcrReader();
-            var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\490067775.txt")).Single();
-            Check.That(actualAccount.AsString()).IsEqualTo("480067775");
-        }
-
-        [Test]
-        public void Returns_account_as_a_valid_account_when_input_using_488067775_with_one_flur_digit()
-        {
-            var bankOcrLine = new OcrReader();
-            var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\488067775.txt")).Single();
-            Check.That(actualAccount.AsString()).IsEqualTo("480067775");
-        }
 
         [Test]
         public void Returns_account_as_1_questionMark_3956189_when_input_using_123956189_ill()
@@ -81,21 +127,13 @@
             Check.That(actualAccount.IsValid()).IsFalse();
         }
 
+
         [Test]
         public void Return_account_number_123956189_when_file_contains_123956189()
         {
             var bankOcrLine = new OcrReader();
             var actual = bankOcrLine.ReadAccountsAsStrings(File.ReadAllLines($@"reference_asciiarts\444444444.txt"));
             Check.That(actual).ContainsExactly("444444444 ERR");
-        }
-
-        [Test]
-        public void Return_corrected_account_number_when_a_digit_is_missing_a_bar()
-        {
-            var bankOcrLine = new OcrReader();
-            var accountAsString = bankOcrLine.ReadAccountsAsStrings(File.ReadAllLines($@"reference_asciiarts\123956189_ILL.txt")).Single();
-
-            Check.That(accountAsString).IsEqualTo("123956188");
         }
 
 

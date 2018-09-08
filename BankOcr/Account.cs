@@ -28,45 +28,10 @@
 
             if (!IsValid())
             {
-                foreach (var digit in DigitsValues)
-                {
-                    if (digit.GetNumeric() == 9)
-                    {
-                        if (CheckAndReplaceValue(digit, out var asString))
-                        {
-                            return asString;
-                        }
-                    }
-
-                    if (digit.GetNumeric() == 8)
-                    {
-                        digit.ForceValue(0);
-                        if (IsValid())
-                        {
-                            return FormatAccount();
-                        }
-                        digit.ForceValue(null);
-                    }
-                }
                 return t + " ERR";
             }
 
             return t;
-        }
-
-        private bool CheckAndReplaceValue(Digit digit, out string asString)
-        {
-            digit.ForceValue(8);
-            if (IsValid())
-            {
-                {
-                    asString = FormatAccount();
-                    return true;
-                }
-            }
-
-            digit.ForceValue(null);
-            return false;
         }
 
         private string FormatAccount()
