@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using BankOcr.Sources;
 using NFluent;
 using NUnit.Framework;
 

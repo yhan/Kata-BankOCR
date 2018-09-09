@@ -49,22 +49,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccounCombinationComputer.cs" />
-    <Compile Include="Account.cs" />
+    <Compile Include="Sources\AccounCombinationComputer.cs" />
+    <Compile Include="Sources\Account.cs" />
     <Compile Include="Tests\AccountCompensationShould.cs" />
-    <Compile Include="AccountCompensator.cs" />
+    <Compile Include="Sources\AccountCompensator.cs" />
     <Compile Include="Tests\BankOcrShould.cs" />
     <Compile Include="Sources\AsciiReaders\BodyReader.cs" />
-    <Compile Include="Digit.cs" />
-    <Compile Include="DigitCompensator.cs" />
-    <Compile Include="DigitGroup.cs" />
+    <Compile Include="Sources\Digit.cs" />
+    <Compile Include="Sources\DigitCompensator.cs" />
+    <Compile Include="Sources\DigitGroup.cs" />
     <Compile Include="Tests\DigitShould.cs" />
     <Compile Include="Sources\AsciiReaders\FooterReader.cs" />
     <Compile Include="Sources\AsciiReaders\HeaderReader.cs" />
-    <Compile Include="Node.cs" />
-    <Compile Include="OcrReader.cs" />
+    <Compile Include="Sources\Node.cs" />
+    <Compile Include="Sources\OcrReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tree.cs" />
+    <Compile Include="Sources\Tree.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
