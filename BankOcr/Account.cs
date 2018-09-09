@@ -8,12 +8,24 @@
     public class Account
     {
         private int _checksum;
+        private readonly AccountCompensator _accountCompensator = new AccountCompensator();
 
         public List<Digit> DigitsValues { get; }
 
         public Account(List<Digit> digitsValues)
         {
             this.DigitsValues = digitsValues;
+        }
+
+        public Account(int[] numerics)
+        {
+            this.DigitsValues = numerics.Select((x, index) =>
+            {
+                int checksum = 9 - index;
+                var digit = new Digit(x, checksum);
+
+                return digit;
+            }).ToList();
         }
 
         public string AsString()
@@ -28,7 +40,20 @@
 
             if (!IsValid())
             {
-                return t + " ERR";
+                var validAccounts = _accountCompensator.Compensate(this).ToArray();
+
+                if(validAccounts.Length == 0)
+                {
+                    return t + " ERR";
+                }
+
+                if (validAccounts.Length == 1)
+                {
+                    return validAccounts[0].FormatAccount();
+                }
+
+                var validAccountsRepresentations = string.Join(", ", validAccounts.Select(x => x.FormatAccount()));
+                return $"{validAccountsRepresentations} AMB";
             }
 
             return t;

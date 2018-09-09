@@ -50,9 +50,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account.cs" />
+    <Compile Include="AccountCompensationShould.cs" />
+    <Compile Include="AccountCompensator.cs" />
     <Compile Include="BankOcrShould.cs" />
     <Compile Include="BodyReader.cs" />
     <Compile Include="Digit.cs" />
+    <Compile Include="DigitCompensator.cs" />
+    <Compile Include="DigitShould.cs" />
     <Compile Include="FooterReader.cs" />
     <Compile Include="HeaderReader.cs" />
     <Compile Include="IOcrLineReader.cs" />
