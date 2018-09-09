@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class Digit
+    public struct Digit 
     {
         public int ChecksumWeight { get; }
 
@@ -21,7 +21,7 @@
         private readonly string _digitInOneLine;
 
 
-        public Digit(string[] lines, int checksumWeight = 0)
+        public Digit(string[] lines, int checksumWeight = 0) : this()
         {
             ChecksumWeight = checksumWeight;
 
@@ -38,7 +38,7 @@
 
         }
 
-        public Digit(int numeric, int weight)
+        public Digit(int numeric, int weight) : this()
         {
             _numeric = numeric;
             ChecksumWeight = weight;

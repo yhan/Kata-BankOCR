@@ -18,6 +18,7 @@ namespace BankOcr
             const int digitsLength = 9;
             for (int i = 0; i < digitsLength; i++)
             {
+                //this algo won't work if account contains illegal digit
                 var digit = digits[i];
                 var compensatedNumerics = digit.GetCompensatedNumerics();
                 foreach (var compensatedNumeric in compensatedNumerics)
