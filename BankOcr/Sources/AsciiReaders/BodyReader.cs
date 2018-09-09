@@ -1,9 +1,9 @@
-﻿namespace BankOcr
-{
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-    public class BodyReader : IOcrLineReader
+namespace BankOcr.AsciiReaders
+{
+    public class BodyReader
     {
         public HashSet<int> Read(string input)
         {

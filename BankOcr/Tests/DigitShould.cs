@@ -2,7 +2,7 @@
 using NFluent;
 using NUnit.Framework;
 
-namespace BankOcr
+namespace BankOcr.Tests
 {
     [TestFixture]
     public class DigitShould

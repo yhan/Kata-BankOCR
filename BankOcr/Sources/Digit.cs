@@ -1,10 +1,10 @@
-﻿namespace BankOcr
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BankOcr.AsciiReaders;
 
-    public struct Digit 
+namespace BankOcr.Sources
+{
+    public struct Digit
     {
         public int ChecksumWeight { get; }
 
@@ -35,13 +35,14 @@
             _digitInOneLine = $"{_header}{_body}{_footer}".Replace(@"\r\n", "");
 
             _numeric = InitializeValue();
-
         }
 
         public Digit(int numeric, int weight) : this()
         {
             _numeric = numeric;
             ChecksumWeight = weight;
+
+            this._digitInOneLine = DigitCompensator.Referential[numeric];
         }
 
         public string GetDigitAsStringInOneLine()

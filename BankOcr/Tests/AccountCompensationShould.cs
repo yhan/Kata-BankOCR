@@ -3,7 +3,7 @@ using System.Linq;
 using NFluent;
 using NUnit.Framework;
 
-namespace BankOcr
+namespace BankOcr.Tests
 {
     // TODO: use test cases of http://codingdojo.org/kata/BankOCR/
     [TestFixture]
@@ -13,9 +13,9 @@ namespace BankOcr
         public void Return_corrected_account_number_when_a_digit_is_missing_a_bar()
         {
             var bankOcrLine = new OcrReader();
-            var accountAsString = bankOcrLine.ReadAccountsAsStrings(File.ReadAllLines($@"reference_asciiarts\123956189_ILL.txt")).Single();
+            var accountAsString = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\123956189_ILL.txt")).Single();
 
-            Check.That(accountAsString).IsEqualTo("723956189, 123956188 AMB");
+            Check.That(accountAsString.ToString()).IsEqualTo("723956189, 123956188 AMB");
         }
 
         [Test]
@@ -23,7 +23,7 @@ namespace BankOcr
         {
             var bankOcrLine = new OcrReader();
             var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\488067775.txt")).Single();
-            Check.That(actualAccount.AsString()).IsEqualTo("480067775, 488087775, 488067715 AMB");
+            Check.That(actualAccount.ToString()).IsEqualTo("480067775, 488087775, 488067715 AMB");
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace BankOcr
         {
             var bankOcrLine = new OcrReader();
             var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines(@"reference_asciiarts\490067775.txt")).Single();
-            Check.That(actualAccount.AsString()).IsEqualTo("480067775");
+            Check.That(actualAccount.ToString()).IsEqualTo("480067775");
         }
     }
 }

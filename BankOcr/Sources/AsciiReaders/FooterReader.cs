@@ -1,9 +1,8 @@
-﻿namespace BankOcr
-{
-    using System;
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-    public class FooterReader : IOcrLineReader
+namespace BankOcr.AsciiReaders
+{
+    public class FooterReader
     {
         public HashSet<int> Read(string input)
         {

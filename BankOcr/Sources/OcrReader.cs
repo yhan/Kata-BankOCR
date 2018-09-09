@@ -1,9 +1,9 @@
-﻿namespace BankOcr
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
+namespace BankOcr.Sources
+{
     public class OcrReader
     {
         public int Read(string[] lines)
@@ -113,10 +113,9 @@
             return 0;
         }
 
-
         public IEnumerable<string> ReadAccountsAsStrings(string[] lines)
         {
-            var readAccountsAsStrings = ReadAccounts(lines).Select(account => account.AsString()).ToArray();
+            var readAccountsAsStrings = ReadAccounts(lines).Select(account => account.ToString()).ToArray();
             return readAccountsAsStrings;
         }
 

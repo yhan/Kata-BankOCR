@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace BankOcr
+namespace BankOcr.Sources
 {
     public class DigitCompensator
     {
-        private readonly Dictionary<int, string> _referential = new Dictionary<int, string>
+        public static readonly Dictionary<int, string> Referential = new Dictionary<int, string>
         {
             [0] = " _ | ||_|",
             [1] = "     |  |",
@@ -20,7 +20,7 @@ namespace BankOcr
 
         internal IEnumerable<int> Compensate(string toCompensate)
         {
-            foreach (var numericAndString in _referential)
+            foreach (var numericAndString in Referential)
             {
                 var numeric = numericAndString.Key;
                 string referential = numericAndString.Value;

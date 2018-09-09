@@ -1,15 +1,11 @@
-﻿using System.Runtime.InteropServices.WindowsRuntime;
+﻿using System;
+using System.IO;
+using System.Linq;
+using NFluent;
+using NUnit.Framework;
 
-namespace BankOcr
+namespace BankOcr.Tests
 {
-    using System;
-    using System.IO;
-    using System.Linq;
-
-    using NFluent;
-
-    using NUnit.Framework;
-
     [TestFixture]
     public class BankOcrShould
     {
@@ -45,7 +41,7 @@ namespace BankOcr
         {
             var bankOcrLine = new OcrReader();
             var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\0123456789_correct_checksum_but_one_digit_flured.txt")).Single();
-            Check.That(actualAccount.AsString()).IsEqualTo("123456789");
+            Check.That(actualAccount.ToString()).IsEqualTo("123456789");
         }
 
         [Test]
@@ -54,7 +50,7 @@ namespace BankOcr
             var bankOcrLine = new OcrReader();
             var actualAccount = bankOcrLine.ReadAccounts(File.ReadAllLines($@"reference_asciiarts\444444444.txt")).Single();
 
-            Check.That(actualAccount.AsString()).IsEqualTo("444444444 ERR");
+            Check.That(actualAccount.ToString()).IsEqualTo("444444444 ILL");
         }
 
         [Test]
@@ -72,7 +68,7 @@ namespace BankOcr
         {
             var bankOcrLine = new OcrReader();
             var actual = bankOcrLine.ReadAccountsAsStrings(File.ReadAllLines($@"reference_asciiarts\444444444.txt"));
-            Check.That(actual).ContainsExactly("444444444 ERR");
+            Check.That(actual).ContainsExactly("444444444 ILL");
         }
 
 
@@ -191,7 +187,7 @@ namespace BankOcr
             var readAllLines = File.ReadAllLines(@"reference_asciiarts\list_of_accounts.txt");
             var ocrReader = new OcrReader();
             var expected = ocrReader.ReadAccountsAsStrings(readAllLines);
-            Check.That(expected).Contains("123456789", "444444444 ERR", "000000000");
+            Check.That(expected).Contains("123456789", "444444444 ILL", "000000000");
         }
 
 
